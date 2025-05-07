@@ -1,0 +1,141 @@
+{
+  "header": {
+    "nav": {
+      "home": "Accueil",
+      "features": "Fonctionnalités",
+      "prices": "Tarifs",
+      "support": "Support",
+      "login": "Se connecter"
+    }
+  },
+  "modals": {
+    "confirm": {
+      "cancelButton": "Annuler",
+      "confirmButton": "Confirmer"
+    }
+  },
+  "footer": {
+    "legal": {
+      "title": "Mentions légales",
+      "nav": {
+        "termsAndConditions": "Conditions générales",
+        "privacyPolicy": "Politique de confidentialité",
+        "legalMentions": "Mentions légales"
+      }
+    },
+    "links": {
+      "title": "Liens",
+      "nav": {
+        "home": "Accueil",
+        "features": "Fonctionnalités",
+        "prices": "Tarifs",
+        "support": "Support"
+      }
+    },
+    "allRightReserved": "Tous droits réservés"
+  },
+  "home": {
+    "pageTitle": "Accueil",
+    "heroHeader": {
+      "title": ["Votre premier pas vers un entretien", "réussi"],
+      "subtitle": "MockIn, la solution intelligente pour t'entraîner et t'améliorer avant tes entretiens"
+    },
+    "features": {
+      "title": ["Ce que propose la", "solution"],
+      "features": [
+        {
+          "title": "Simulation d'entretien",
+          "subtitle": "Répondez à des questions réalistes adaptées à votre secteur et préparez-vous efficacement à vos futurs entretiens.",
+          "link": "Explorez les thématiques disponibles"
+        },
+        {
+          "title": "Réponse Orale ou Écrite",
+          "subtitle": "Répondez à l’oral pour travailler votre élocution, ou à l’écrit pour structurer vos idées. Vous choisissez selon vos objectifs.",
+          "link": "En savoir plus"
+        },
+        {
+          "title": "Analyse de la Performance",
+          "subtitle": "Structure, clarté, confiance : chaque réponse est analysée pour booster votre impact auprès des recruteurs.",
+          "link": "Connaître les indicateurs"
+        },
+        {
+          "title": "Feedback Automatique",
+          "subtitle": "Recevez un résumé clair de votre réponse avec des conseils pratiques pour vous améliorer entretien après entretien.",
+          "link": "Découvrir le fonctionnement"
+        },
+        {
+          "title": "Historique et Suivi de Progression",
+          "subtitle": "Gardez une trace de tous vos entretiens simulés et suivez l’évolution de vos performances dans le temps.",
+          "link": "En savoir plus"
+        },
+        {
+          "title": "Personnalisation du Parcours",
+          "subtitle": "L’application adapte les questions et les conseils selon votre profil, vos compétences et votre niveau d'expérience.",
+          "link": "Découvrir les possibilités"
+        }
+      ]
+    },
+    "support": {
+      "title": ["Vous avez des", "questions", "On y répond ici"]
+    }
+  },
+  "interview": {
+    "homeButton": "Retour à l'accueil",
+    "backToThemesButton": "Retour aux thèmes",
+    "cancelButton": "Abandonner l'interview",
+    "questionsOutOf": "Question {0} sur {1}",
+    "myData": ["Comment sont gérés mes données ?", "Voir notre politique de confidentialité."],
+    "beforeStart": {
+      "pageTitle": "Avant de commencer",
+      "title": "Quel thème souhaitez-vous pratiquer ?"
+    },
+    "modeSelection": {
+      "pageTitle": "Mode d'interview",
+      "title": "Quel mode souhaitez-vous utilisé par défaut ?",
+      "subtitle": "Vous pouvez changer à tout moment durant votre intretien",
+      "recommanded": "Recommandé",
+      "start": "Commencer l'entretien",
+      "modes": [
+        {
+          "title": "Vocal",
+          "description": "Vous offre la possibilité d'avoir un feedback sur personnalité sur la qualité de votre discours."
+        },
+        {
+          "title": "Textuel",
+          "description": "Plus simple que de parler devant un micro, permet d'avoir un feedback sur votre façon de rédiger."
+        }
+      ]
+    },
+    "interface": {
+      "pageTitle": "Interview",
+      "rephrase": "Des difficultés à comprendre ? Reformulez",
+      "validateAnswer": "Valider ma réponse",
+      "sendResults": "Voir mon resultat",
+      "feedback": {
+        "clarity": "Claireté",
+        "conciseness": "Concision",
+        "structure": "Structure",
+        "confidence": "Confiance"
+      },
+      "choices": [
+        {
+          "label": "écrit",
+          "placeholder": "Entrer votre réponse ici",
+          "min": "caractères minimum"
+        },
+        {
+          "label": "vocal",
+          "recording": "Enregistrement en cours",
+          "recorded": "Audio enregistré !",
+          "microphoneNotAllowed": "Vous avez refusé le microhpone sur ce site internet. Veuillez l'activer dans vos paramètres.",
+          "advices": {
+            "default": ["Cliquez sur l'icon", "pour démarrer"]
+          }
+        }
+      ]
+    },
+    "recap": {
+      "title": "Récapitalitif"
+    }
+  }
+}

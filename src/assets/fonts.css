@@ -1,0 +1,33 @@
+@font-face {
+  font-family: 'manrope-bold';
+  src: url(/fonts/manrope-bold.ttf);
+}
+@font-face {
+  font-family: 'manrope-medium';
+  src: url(/fonts/manrope-medium.ttf);
+}
+@font-face {
+  font-family: 'manrope-regular';
+  src: url(/fonts/manrope-regular.ttf);
+}
+
+@font-face {
+  font-family: 'spacegrotesk-bold';
+  src: url(/fonts/spacegrotesk-bold.ttf);
+}
+@font-face {
+  font-family: 'spacegrotesk-semibold';
+  src: url(/fonts/spacegrotesk-semibold.ttf);
+}
+@font-face {
+  font-family: 'spacegrotesk-medium';
+  src: url(/fonts/spacegrotesk-medium.ttf);
+}
+@font-face {
+  font-family: 'spacegrotesk-regular';
+  src: url(/fonts/spacegrotesk-regular.ttf);
+}
+@font-face {
+  font-family: 'spacegrotesk-light';
+  src: url(/fonts/spacegrotesk-light.ttf);
+}
