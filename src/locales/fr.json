@@ -79,7 +79,41 @@
       "title": ["Vous avez des", "questions", "On y répond ici"]
     }
   },
+  "authentication": {
+    "backToHome": "Retour à l'accueil",
+    "login": {
+      "title": "Connexion à votre compte",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "or": "ou",
+      "rememberMe": "Se souvenir de moi",
+      "confirm": "Se connecter",
+      "connectWith": "Connexion avec",
+      "otherChoice": ["Vous n'avez pas de compte ?", "Inscrivez-vous"]
+    },
+    "register": {
+      "title": "Inscription",
+      "email": "E-mail",
+      "confirm": "S'inscrire",
+      "otherChoice": ["Déjà un compte ?", "Connectez-vous"]
+    },
+    "passwordForgotten": {
+      "email": "E-mail de récupération",
+      "title": "Mot de passe oublié",
+      "otherChoice": ["Mot de passe retrouvé ?", "Connectez-vous"],
+      "confirm": "Envoyer un e-mail"
+    }
+  },
   "interview": {
+    "status": {
+      "FINISHED": "Fini",
+      "GIVEN_UP": "Abandonné",
+      "IN_PROGRESS": "En cours"
+    },
+    "startConfirmation": {
+      "title": "Commencer l'interview '{0}'",
+      "description": "Attention il n'y a pas de retour en arrière à part abandonner celle-ci."
+    },
     "homeButton": "Retour à l'accueil",
     "backToThemesButton": "Retour aux thèmes",
     "cancelButton": "Abandonner l'interview",
@@ -88,6 +122,10 @@
     "beforeStart": {
       "pageTitle": "Avant de commencer",
       "title": "Quel thème souhaitez-vous pratiquer ?"
+    },
+    "givenUp": {
+      "title": "Êtes-vous sûr de vouloir abandonner ?",
+      "subtitle": "Cette action définir votre interview comme un abandon"
     },
     "modeSelection": {
       "pageTitle": "Mode d'interview",

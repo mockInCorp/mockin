@@ -47,7 +47,7 @@ const headerSticky = ref<boolean>(false)
       </ul>
       <ul>
         <li>
-          <!-- <BaseButton disabled :link="{ name: 'home' }" :text="$t('header.nav.login')" /> -->
+          <BaseButton :link="{ name: 'authentication' }" :text="$t('header.nav.login')" />
         </li>
       </ul>
     </nav>

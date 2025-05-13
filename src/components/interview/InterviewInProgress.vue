@@ -117,12 +117,14 @@ const emit = defineEmits([
   'updateInterview',
   'updateQuestionFeedback',
   'setInterviewerAnswering',
+  'selectTheme',
 ])
 
 const props = defineProps<{
   interview?: IInterviewCache
   questionFeedback: IInterviewQuestionFeedback | null
   isInterviewerAnswering: boolean
+  theme?: unknown
 }>()
 const data = toRef(() => props.interview)
 

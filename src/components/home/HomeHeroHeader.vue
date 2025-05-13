@@ -49,6 +49,10 @@ div.hero-header div.left {
     word-wrap: break-word;
     margin-bottom: 1em;
   }
+  & a {
+    width: fit-content;
+    display: block;
+  }
   & a * {
     font-size: 1.2em;
   }

@@ -84,13 +84,16 @@ a {
   text-decoration: none;
 }
 button {
-  all: unset;
   padding: 0.5em 1em;
   font-size: 16px;
 
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5em;
+
+  color: white;
+  background-color: transparent;
 
   border-radius: 100px;
 
@@ -121,7 +124,7 @@ button {
   &.secondary {
     background-color: transparent;
     color: var(--primary);
-    background-color: var(--primary);
+    border-color: var(--primary);
   }
   &.thirdery {
     border: unset;

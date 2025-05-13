@@ -5,7 +5,7 @@
     @close="confirm = undefined"
     :title="confirm?.title ?? ''"
   >
-    <p>{{ confirm?.description }}</p>
+    <p v-if="confirm?.description">{{ confirm?.description }}</p>
     <footer>
       <BaseButton @click="closeModal" :text="$t('modals.confirm.cancelButton')" type="thirdery" />
       <BaseButton
@@ -30,7 +30,7 @@ import BaseModal from '../BaseModal.vue'
 
 export interface IConfirmParams {
   title: string
-  description: string
+  description?: string
   onConfirm: () => void
 }
 
@@ -51,10 +51,10 @@ footer {
 p {
   margin-top: 1em;
   border-radius: 5px;
-  color: var(--orange);
-  background-color: var(--orange-200);
+  color: var(--red);
+  background-color: var(--red-200);
   padding: 1em;
   font-family: 'manrope-bold', sans-serif;
-  border-left: 4px solid var(--orange);
+  border-left: 4px solid var(--red);
 }
 </style>

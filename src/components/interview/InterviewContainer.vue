@@ -31,6 +31,8 @@
         :interview="interview"
         :question-feedback="questionFeedback"
         :is-interviewer-answering="isInterviewerAnswering"
+        :theme="theme"
+        @select-theme="selectTheme"
         @update-question-feedback="updateQuestionFeedback"
         @set-interviewer-answering="setInterviewerAnswering"
         @update-interview="updateInterview"
@@ -50,15 +52,16 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import { useAPIRequestStore } from '@/stores/apiRequest'
+
 import BaseButton from '../ui/BaseButton.vue'
 import InterviewBeforeStart from './InterviewBeforeStart.vue'
 import InterviewInterface from './InterviewInProgress.vue'
-import { useAPIRequestStore } from '@/stores/apiRequest'
+import InterviewRecap from './InterviewRecap.vue'
 
 import gql from 'graphql-tag'
 import type { IInterviewCache, IInterviewQuestionFeedback } from '@/types'
 
-import InterviewRecap from './InterviewRecap.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -66,15 +69,19 @@ const { t } = useI18n()
 const step = ref(0)
 const steps = ref([InterviewBeforeStart, InterviewInterface, InterviewRecap])
 
+// TODO: stocker l'id de l'interview en cours (et gérér les cas d'erreur)
+
 const interview = ref<IInterviewCache | undefined>(undefined)
+const theme = ref<{ id: string; displayName: string } | null>(null)
+
 const isInterviewerAnswering = ref(false)
 const questionFeedback = ref<IInterviewQuestionFeedback | null>(null)
 
 const interviewComponent = computed(() => steps.value[step.value])
 const cancel = () => {
   window.confirmModal({
-    title: 'Êtes-vous sûr de vouloir abandonner',
-    description: 'Cette action est irreversible.',
+    title: t('interview.givenUp.title'),
+    description: t('interview.givenUp.subtitle'),
     onConfirm: async () => {
       await useAPIRequestStore().request({
         type: 'MUTATION',
@@ -94,31 +101,34 @@ const cancel = () => {
   })
 }
 
-const nextStep = async () => {
-  step.value++
-  if (step.value === 1) {
-    try {
-      const response = await useAPIRequestStore().request<{
-        startInterview: IInterviewCache
-      }>({
-        type: 'MUTATION',
-        document: gql`
-          mutation StartInterview {
-            startInterview {
-              id
-              status
-              question
+const nextStep = () => {
+  if (step.value + 1 === 1) {
+    window.confirmModal({
+      title: t('interview.startConfirmation.title', [theme.value?.displayName ?? '']),
+      description: t('interview.startConfirmation.description'),
+      onConfirm: async () => {
+        step.value++
+        const response = await useAPIRequestStore().request<{
+          startInterview: IInterviewCache
+        }>({
+          type: 'MUTATION',
+          document: gql`
+            mutation StartInterview($input: StartInterviewInput!) {
+              startInterview(input: $input) {
+                id
+                status
+                question
 
-              answerCount
-              maxAnswerCount
+                answerCount
+                maxAnswerCount
+              }
             }
-          }
-        `,
-      })
-      interview.value = response.startInterview
-    } catch (e) {
-      console.error(e)
-    }
+          `,
+          variables: { input: { themeId: theme.value?.id } },
+        })
+        interview.value = response.startInterview
+      },
+    })
   }
 }
 const updateInterview = (props: Partial<IInterviewCache>) => {
@@ -131,6 +141,10 @@ const updateQuestionFeedback = (feedback: IInterviewQuestionFeedback) => {
 }
 const setInterviewerAnswering = (isAnswering: boolean) => {
   isInterviewerAnswering.value = isAnswering
+}
+
+const selectTheme = (t: { id: string; displayName: string }) => {
+  theme.value = t
 }
 </script>
 

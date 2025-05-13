@@ -1,9 +1,71 @@
 textarea {
-  width: 100%;
-  font-family: 'manrope-regular', sans-serif;
   resize: vertical;
   padding: 1em;
   border-radius: 10px;
+}
+
+input {
+  padding: 0.5em 1em;
+  border-radius: 100px;
+}
+
+input,
+textarea {
+  width: 100%;
+  font-family: 'manrope-regular', sans-serif;
   border: 1px solid var(--gray-1);
+  color: var(--black-1);
   font-size: 1em;
+}
+
+div.form-field {
+  margin: 1em 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 1em;
+  font-size: 0.9em;
+  font-family: 'manrope-bold', sans-serif;
+  color: var(--black-2);
+
+  &.required::after {
+    padding-left: 0.5em;
+    content: '*';
+    color: var(--red);
+  }
+}
+
+input[type='checkbox'] {
+  display: none;
+
+  &:checked + label::before {
+    background-color: var(--primary);
+  }
+
+  & + label {
+    position: relative;
+    cursor: pointer;
+    margin-left: 2em;
+    font-size: 1em;
+    color: var(--primary);
+    padding-left: 1.8em;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 2px solid var(--primary);
+      border-radius: 0.2rem;
+      background: #fff;
+      box-sizing: border-box;
+      transition:
+        background 0.2s,
+        border-color 0.2s;
+    }
+  }
 }
