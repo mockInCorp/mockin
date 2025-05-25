@@ -6,9 +6,14 @@
       :style="style"
       :class="`${level} ${type} ${className} ${classNames?.join(' ')}`"
     >
-      <mdicon :size="iconSize" v-if="icon && iconPosition === 'left'" :name="icon" />
-      <span class="text" v-if="text">{{ text }}</span>
-      <mdicon :size="iconSize" v-if="icon && iconPosition === 'right'" :name="icon" />
+      <mdicon :size="iconSize" v-if="!isLoading && icon && iconPosition === 'left'" :name="icon" />
+      <span class="text" v-if="text">
+        <template v-if="!isLoading">
+          {{ text }}
+        </template>
+        <BaseLoader color="#FFFFFF" :size="1.5" :thickness="2" v-else />
+      </span>
+      <mdicon :size="iconSize" v-if="!isLoading && icon && iconPosition === 'right'" :name="icon" />
     </button>
   </template>
   <RouterLink :to="link" v-else>
@@ -18,14 +23,21 @@
       :style="style"
       :class="`${level} ${type} ${className} ${classNames?.join(' ')}`"
     >
-      <mdicon :size="iconSize" v-if="icon && iconPosition === 'left'" :name="icon" />
-      <span class="text" v-if="text">{{ text }}</span>
-      <mdicon :size="iconSize" v-if="icon && iconPosition === 'right'" :name="icon" />
+      <mdicon :size="iconSize" v-if="!isLoading && icon && iconPosition === 'left'" :name="icon" />
+      <span class="text" v-if="text">
+        <template v-if="!isLoading">
+          {{ text }}
+        </template>
+        <BaseLoader color="#FFFFFF" :size="1.5" :thickness="2" v-else />
+      </span>
+      <mdicon :size="iconSize" v-if="!isLoading && icon && iconPosition === 'right'" :name="icon" />
     </button>
   </RouterLink>
 </template>
 
 <script lang="ts" setup>
+import BaseLoader from './BaseLoader.vue'
+
 defineProps({
   type: {
     type: String,
@@ -70,6 +82,11 @@ defineProps({
     type: Array,
     required: false,
     default: () => [],
+  },
+  isLoading: {
+    type: Boolean,
+    required: false,
+    default: false,
   },
   className: {
     type: String,

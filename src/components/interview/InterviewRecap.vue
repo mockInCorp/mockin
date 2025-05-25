@@ -69,7 +69,6 @@ onMounted(async () => {
         query Interview($id: ID!) {
           interview(id: $id) {
             endedAt
-            feedbackComment
             globalFeedback {
               clarity
               conciseness
@@ -88,6 +87,11 @@ onMounted(async () => {
     recapInterview.value = response.interview
   } catch (e) {
     console.error(e)
+    const error = e as Error
+    window.toast({
+      level: 'ERROR',
+      title: error.message,
+    })
   } finally {
     isLoading.value = false
   }

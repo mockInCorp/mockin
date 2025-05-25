@@ -13,7 +13,16 @@ const isClickingOutside = (
   if (!parent || (parent && parent !== targetElement)) return cb(false, parent)
 }
 
+const extractInitials = (displayName: string) => {
+  let result = ''
+  for (const word of displayName.split(' ')) {
+    result += word.substring(0, 1)
+  }
+  return result
+}
+
 export default {
+  extractInitials,
   setPageTitle,
   isClickingOutside,
 }

@@ -1,12 +1,38 @@
 <script lang="ts" setup>
 import { RouterLink } from 'vue-router'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useAuthenticationStore } from '@/stores/authentication'
+import globalUtils from '@/utils/global.utils'
+
 import BaseButton from '@/components/ui/BaseButton.vue'
-import { ref } from 'vue'
 
 const isResponsiveMenuToggled = ref(false)
 
 const headerRef = ref<HTMLElement | undefined>(undefined)
 const headerSticky = ref<boolean>(false)
+
+const isToggled = ref<boolean>(false)
+
+const profileRef = ref<HTMLElement | undefined>(undefined)
+
+const { isAuthenticated, me } = storeToRefs(useAuthenticationStore())
+
+const isClickingOutside = (event: Event) => {
+  globalUtils.isClickingOutside(event.target as HTMLElement, profileRef.value!, (isFound) => {
+    if (!isFound) {
+      isToggled.value = false
+    }
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('click', isClickingOutside)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('click', isClickingOutside)
+})
 
 // onMounted(() => {
 //   const headerHeight = headerRef.value!.offsetHeight
@@ -46,11 +72,37 @@ const headerSticky = ref<boolean>(false)
         </li>
       </ul>
       <ul>
-        <li>
-          <BaseButton :link="{ name: 'authentication' }" :text="$t('header.nav.login')" />
-        </li>
+        <template v-if="!isAuthenticated">
+          <li>
+            <BaseButton :link="{ name: 'authentication' }" :text="$t('header.nav.login')" />
+          </li>
+        </template>
+        <template v-else>
+          <li ref="profileRef" class="profile">
+            <div tabindex="0" class="profile-section" @click="isToggled = !isToggled">
+              {{ me?.givenName }} {{ me?.familyName.substring(0, 1) }}.
+              <span class="logo">{{
+                globalUtils.extractInitials(`${me?.givenName} ${me?.familyName}`)
+              }}</span>
+              <mdicon name="chevron-down" />
+            </div>
+
+            <ul v-show="isToggled">
+              <li>
+                <RouterLink :to="{ name: 'home' }">
+                  {{ $t('header.profile.myProfile') }}
+                </RouterLink>
+              </li>
+              <li tabindex="0" @click="useAuthenticationStore().disconnect" class="disconnect">
+                <span>{{ $t('header.profile.disconnect') }}</span>
+              </li>
+            </ul>
+          </li>
+        </template>
       </ul>
     </nav>
+
+    <!-- TODO: ajouter la section profil dans la navbar responsive -->
     <nav :style="{ top: !headerSticky ? '-10em' : '0' }" class="responsive">
       <RouterLink :to="{ name: 'home' }">
         <img src="/images/logo/logo.svg" alt="logo" />
@@ -210,6 +262,82 @@ header {
         }
         &.active {
           font-family: 'manrope-bold', sans-serif;
+        }
+      }
+    }
+  }
+}
+
+li.profile {
+  position: relative;
+
+  & > div.profile-section {
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+
+    background-color: var(--gray-4);
+    padding: 0.5em 0.8em;
+    border-radius: 100px;
+    user-select: none;
+
+    & > span.logo {
+      background-color: var(--primary);
+      padding: 0.5em 0;
+      width: 2.8em;
+      text-align: center;
+      color: var(--white);
+      padding: 0.6em 0.5em;
+      border-radius: 100px;
+      font-family: 'manrope-bold', sans-serif;
+      user-select: none;
+    }
+  }
+
+  & > ul {
+    position: absolute;
+    bottom: -5.5em;
+    left: 0;
+    box-shadow: var(--shadow-settings-1);
+    width: 100%;
+    border-radius: 10px;
+
+    flex-direction: column;
+    gap: 0 !important;
+
+    & > li {
+      width: 100%;
+      text-align: center;
+      transition: all 0.5s ease;
+      user-select: none;
+      cursor: pointer;
+
+      a,
+      span {
+        display: block;
+        padding: 0.5em 0.8em;
+      }
+
+      &:first-of-type {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+      &:last-of-type {
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+
+      &.disconnect:hover {
+        background-color: var(--red);
+        color: var(--white);
+      }
+
+      &:hover {
+        background-color: var(--primary);
+        & > a {
+          color: var(--white) !important;
         }
       }
     }

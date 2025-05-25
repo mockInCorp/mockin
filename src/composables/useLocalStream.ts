@@ -1,5 +1,7 @@
 import { computed, onMounted, ref } from 'vue'
 
+const MAX_DURATION_MS = 10 * 60 * 1000
+
 const useLocalStream = () => {
   const stream = ref<MediaStream | undefined>(undefined)
   const mediaRecorder = ref<MediaRecorder | undefined>(undefined)
@@ -12,7 +14,16 @@ const useLocalStream = () => {
 
   const volume = ref<number>(0)
 
-  const isAudioAvailable = computed(() => audioChunks.value.length > 0)
+  const startTime = ref<number | null>(null)
+  const now = ref(Date.now())
+  const elapsed = computed(() => {
+    if (startTime.value === null) return 0
+    return now.value - startTime.value
+  })
+  const timerId = ref<number | null>(null)
+
+  const _isAudioAvailable = ref(false)
+  const isAudioAvailable = computed(() => _isAudioAvailable.value || audioChunks.value.length > 0)
 
   const audioContext = ref<AudioContext | undefined>(undefined)
   const analyser = ref<AnalyserNode | undefined>(undefined)
@@ -42,6 +53,7 @@ const useLocalStream = () => {
       }
 
       mediaRecorder.value.start()
+      startTimer()
 
       audioContext.value = new AudioContext()
       const source = audioContext.value.createMediaStreamSource(stream.value)
@@ -77,7 +89,9 @@ const useLocalStream = () => {
       stream.value = undefined
     }
 
-    audioContext.value?.close()
+    if (audioContext.value?.state !== 'closed') {
+      audioContext.value?.close()
+    }
   }
 
   const reset = () => {
@@ -96,6 +110,26 @@ const useLocalStream = () => {
   const getAudio = () => {
     const audioBlob = new Blob(audioChunks.value, { type: 'audio/webm' })
     return new File([audioBlob], 'audio.webm', { type: 'audio/webm' })
+  }
+
+  const startTimer = () => {
+    startTime.value = Date.now()
+    now.value = startTime.value
+    timerId.value = window.setInterval(() => {
+      now.value = Date.now()
+      if (elapsed.value >= MAX_DURATION_MS) {
+        stopTimer()
+        stop()
+        _isAudioAvailable.value = true
+      }
+    }, 200)
+  }
+
+  const stopTimer = () => {
+    if (timerId.value !== null) {
+      clearInterval(timerId.value)
+      timerId.value = null
+    }
   }
 
   return {

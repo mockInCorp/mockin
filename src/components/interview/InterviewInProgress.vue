@@ -1,7 +1,10 @@
 <template>
   <h2 class="question">
     <template v-if="isInterviewerAnswering">
-      <BaseLoader :thickness="3" :size="1.5" />
+      <div class="analysing">
+        <BaseLoader :thickness="3" :size="1.5" />
+        <h4>Analyse en cours</h4>
+      </div>
     </template>
     <template v-else>
       <span>{{ currentQuestion }}</span>
@@ -16,74 +19,79 @@
     </template>
   </h2>
 
-  <div class="choices">
-    <div :style="{ left: feedbackType === 'voice' ? '48%' : '-3px' }" class="slider" />
-    <div
-      tabindex="0"
-      @click="feedbackType = 'text'"
-      class="item"
-      :class="{ active: feedbackType === 'text' }"
-    >
-      <mdicon name="pencil-outline" /> {{ $t('interview.interface.choices.0.label') }}
-    </div>
-    <div
-      tabindex="0"
-      @click="feedbackType = 'voice'"
-      class="item"
-      :class="{ active: feedbackType === 'voice' }"
-    >
-      <mdicon name="microphone" /> {{ $t('interview.interface.choices.1.label') }}
-    </div>
-  </div>
-
-  <template v-if="feedbackType === 'text'">
-    <textarea
-      v-model="textFeedback"
-      ref="textareaRef"
-      :placeholder="`${$t('interview.interface.choices.0.placeholder')}...`"
-    />
-    <span class="chars-min"
-      >{{ MIN_TEXT_CHARS }} {{ $t('interview.interface.choices.0.min') }}.</span
-    >
-  </template>
-  <template v-else>
-    <template v-if="isMicrophoneAllowed">
-      <div class="voice-area">
-        <BaseButton
-          :class="{ capture: volume > 1 }"
-          @click="!isAudioAvailable && toggleAudio()"
-          :icon="isRecording ? 'stop' : isAudioAvailable ? 'check' : 'microphone'"
-          :icon-size="40"
-          type="thirdery"
-        />
-
-        <p v-if="!isRecording && !isAudioAvailable" class="advise">
-          {{ $t('interview.interface.choices.1.advices.default.0') }} <mdicon name="microphone" />
-          {{ $t('interview.interface.choices.1.advices.default.1') }}.
-        </p>
-        <p class="recording" v-else-if="isAudioAvailable">
-          {{ $t('interview.interface.choices.1.recorded') }}
-        </p>
-        <p class="recording" v-else>{{ $t('interview.interface.choices.1.recording') }}...</p>
+  <template v-if="!isInterviewerAnswering">
+    <div class="choices">
+      <div :style="{ left: feedbackType === 'voice' ? '48%' : '-3px' }" class="slider" />
+      <div
+        tabindex="0"
+        @click="feedbackType = 'text'"
+        class="item"
+        :class="{ active: feedbackType === 'text' }"
+      >
+        <mdicon name="pencil-outline" /> {{ $t('interview.interface.choices.0.label') }}
       </div>
+      <div
+        tabindex="0"
+        @click="feedbackType = 'voice'"
+        class="item"
+        :class="{ active: feedbackType === 'voice' }"
+      >
+        <mdicon name="microphone" /> {{ $t('interview.interface.choices.1.label') }}
+      </div>
+    </div>
+
+    <template v-if="feedbackType === 'text'">
+      <textarea
+        v-model="textFeedback"
+        ref="textareaRef"
+        :placeholder="`${$t('interview.interface.choices.0.placeholder')}...`"
+      />
+      <span class="chars-min"
+        >{{ MIN_TEXT_CHARS }} {{ $t('interview.interface.choices.0.chars') }} minimum,
+        {{ MAX_TEXT_CHARS }} {{ $t('interview.interface.choices.0.chars') }} maximum.</span
+      >
     </template>
     <template v-else>
-      <BaseBanner
-        class="error-banner"
-        :text="$t('interview.interface.choices.1.microphoneNotAllowed')"
-        level="error"
-      />
-    </template>
-  </template>
+      <template v-if="isMicrophoneAllowed">
+        <div class="voice-area">
+          <BaseButton
+            :class="{ capture: volume > 1 }"
+            @click="!isAudioAvailable && toggleAudio()"
+            :icon="isRecording ? 'stop' : isAudioAvailable ? 'check' : 'microphone'"
+            :icon-size="40"
+            type="thirdery"
+          />
 
-  <BaseButton
-    :disabled="isDisabled"
-    @click="sendAnswer"
-    class="validate"
-    :text="$t(`interview.interface.${interview?.isFinished ? 'sendResults' : 'validateAnswer'}`)"
-    :icon="interview?.isFinished ? 'eye' : 'check'"
-    icon-position="right"
-  />
+          <p v-if="!isRecording && !isAudioAvailable" class="advise">
+            {{ $t('interview.interface.choices.1.advices.default.0') }}
+            <mdicon name="microphone" />
+            {{ $t('interview.interface.choices.1.advices.default.1') }}.
+          </p>
+          <p class="recording" v-else-if="isAudioAvailable">
+            {{ $t('interview.interface.choices.1.recorded') }}
+          </p>
+          <p class="recording" v-else>{{ $t('interview.interface.choices.1.recording') }}...</p>
+        </div>
+        <span class="chars-min">Durée maximum de l'audio: {{ MAX_AUDIO_DURATION }} minutes</span>
+      </template>
+      <template v-else>
+        <BaseBanner
+          class="error-banner"
+          :text="$t('interview.interface.choices.1.microphoneNotAllowed')"
+          level="error"
+        />
+      </template>
+    </template>
+
+    <BaseButton
+      :disabled="isDisabled"
+      @click="sendAnswer"
+      class="validate"
+      :text="$t(`interview.interface.${interview?.isFinished ? 'sendResults' : 'validateAnswer'}`)"
+      :icon="interview?.isFinished ? 'eye' : 'check'"
+      icon-position="right"
+    />
+  </template>
 </template>
 
 <script lang="ts" setup>
@@ -108,7 +116,9 @@ import type { IInterviewCache, IInterviewQuestionFeedback } from '@/types'
 
 const { t } = useI18n()
 
-const MIN_TEXT_CHARS = 1
+const MIN_TEXT_CHARS = 50
+const MAX_TEXT_CHARS = 5_000
+const MAX_AUDIO_DURATION = 10
 
 globalUtils.setPageTitle(t('interview.interface.pageTitle'))
 
@@ -138,7 +148,10 @@ const isDisabled = computed(() => {
     return true
   }
   if (feedbackType.value === 'text') {
-    return textFeedback.value.trim().length < MIN_TEXT_CHARS
+    return (
+      textFeedback.value.trim().length < MIN_TEXT_CHARS ||
+      textFeedback.value.trim().length > MAX_TEXT_CHARS
+    )
   } else if (feedbackType.value === 'voice') {
     return !isAudioAvailable.value
   }
@@ -169,8 +182,6 @@ const sendAnswer = async () => {
     return
   }
 
-  const interviewId = props.interview?.id
-
   emit('setInterviewerAnswering', true)
   emit('updateQuestionFeedback', null)
 
@@ -199,7 +210,7 @@ const sendAnswer = async () => {
         }
       `,
       variables: {
-        id: interviewId,
+        id: props.interview!.id,
         input: {
           feedbackType: feedbackType.value.toUpperCase(),
           ...(feedbackType.value === 'text' && { text: textFeedback.value }),
@@ -249,6 +260,18 @@ h4 {
 }
 textarea {
   margin-bottom: 0.5em;
+}
+
+div.analysing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  margin: auto;
+
+  & > h4 {
+    font-size: 0.9em;
+    font-family: 'manrope-medium', sans-serif;
+  }
 }
 
 div.error-banner {

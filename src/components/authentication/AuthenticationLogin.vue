@@ -1,8 +1,10 @@
 <template>
-  <form method="post">
+  <form @submit.prevent="onSubmit" method="post">
+    <BaseBanner :is-shown="!!errorMessage" :text="errorMessage" level="error" />
+
     <div class="form-field">
       <label for="email">{{ $t('authentication.login.email') }}</label>
-      <input id="email" type="email" required />
+      <input v-model="mail" id="email" type="email" required />
     </div>
     <div class="form-field">
       <label for="password">
@@ -11,13 +13,15 @@
           >Mot de passe oublié ?</RouterLink
         >
       </label>
-      <input id="password" type="password" required />
+      <input v-model="password" id="password" type="password" required />
     </div>
-    <!-- <div class="form-field remember-me">
-      <input id="remember-me" type="checkbox" />
-      <label tabindex="0" for="remember-me">{{ $t('authentication.login.rememberMe') }}</label>
-    </div> -->
+    <CheckboxInput
+      id="stay-connected"
+      :label="$t('authentication.login.rememberMe')"
+      v-model="stayConnected"
+    />
     <BaseButton
+      :disabled="isDisabled"
       class="login-btn"
       icon="login"
       icon-position="right"
@@ -49,10 +53,62 @@ import useGoogleProvider from '@/composables/authProviders/useGoogleProvider'
 import BaseButton from '../ui/BaseButton.vue'
 import globalUtils from '@/utils/global.utils'
 import { useI18n } from 'vue-i18n'
+import { computed, ref } from 'vue'
+import BaseBanner from '../ui/BaseBanner.vue'
+import { useAPIRequestStore } from '@/stores/apiRequest'
+import gql from 'graphql-tag'
+import { useAuthenticationStore } from '@/stores/authentication'
+import { useRouter } from 'vue-router'
+import CheckboxInput from '../ui/inputs/CheckboxInput.vue'
 
 const { t } = useI18n()
+const router = useRouter()
+
+const errorMessage = ref<null | string>(null)
 
 globalUtils.setPageTitle(t('authentication.login.title'))
+
+const mail = ref('')
+const password = ref('')
+const stayConnected = ref(false)
+
+const isLoading = ref(false)
+
+const isDisabled = computed(() => {
+  return !mail.value.trim() || !password.value.trim()
+})
+
+const onSubmit = async () => {
+  isLoading.value = true
+  try {
+    const response = await useAPIRequestStore().request<{ login: string }>({
+      type: 'MUTATION',
+      document: gql`
+        mutation Login($email: String!, $password: String!) {
+          login(email: $email, password: $password)
+        }
+      `,
+      variables: {
+        email: mail.value,
+        password: password.value,
+        stayConnected: stayConnected.value,
+      },
+    })
+    const token = response.login
+    useAuthenticationStore().storeToken(token)
+
+    window.toast({
+      level: 'SUCCESS',
+      title: t('authentication.success.nowConnected'),
+    })
+    await router.push({ name: 'home' })
+  } catch (e) {
+    const error = e as Error
+    errorMessage.value = error.message
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <style scoped>

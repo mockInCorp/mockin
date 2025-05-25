@@ -21,6 +21,15 @@ textarea {
 div.form-field {
   margin: 1em 0;
 }
+div.form-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+
+  & > div {
+    width: 100%;
+  }
+}
 
 label {
   display: block;
@@ -33,39 +42,5 @@ label {
     padding-left: 0.5em;
     content: '*';
     color: var(--red);
-  }
-}
-
-input[type='checkbox'] {
-  display: none;
-
-  &:checked + label::before {
-    background-color: var(--primary);
-  }
-
-  & + label {
-    position: relative;
-    cursor: pointer;
-    margin-left: 2em;
-    font-size: 1em;
-    color: var(--primary);
-    padding-left: 1.8em;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1.2rem;
-      height: 1.2rem;
-      border: 2px solid var(--primary);
-      border-radius: 0.2rem;
-      background: #fff;
-      box-sizing: border-box;
-      transition:
-        background 0.2s,
-        border-color 0.2s;
-    }
   }
 }

@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAPIRequestStore } from '@/stores/apiRequest'
 
 import BaseButton from '../ui/BaseButton.vue'
@@ -69,8 +69,7 @@ const { t } = useI18n()
 const step = ref(0)
 const steps = ref([InterviewBeforeStart, InterviewInterface, InterviewRecap])
 
-// TODO: stocker l'id de l'interview en cours (et gérér les cas d'erreur)
-
+const interviewId = ref<string | null>(localStorage.getItem('mockin:interviewId'))
 const interview = ref<IInterviewCache | undefined>(undefined)
 const theme = ref<{ id: string; displayName: string } | null>(null)
 
@@ -83,20 +82,29 @@ const cancel = () => {
     title: t('interview.givenUp.title'),
     description: t('interview.givenUp.subtitle'),
     onConfirm: async () => {
-      await useAPIRequestStore().request({
-        type: 'MUTATION',
-        document: gql`
-          mutation GiveUpInterview($id: ID!) {
-            giveupInterview(id: $id) {
-              id
+      try {
+        localStorage.removeItem('mockin:interviewId')
+        await useAPIRequestStore().request({
+          type: 'MUTATION',
+          document: gql`
+            mutation GiveUpInterview($id: ID!) {
+              giveupInterview(id: $id) {
+                id
+              }
             }
-          }
-        `,
-        variables: {
-          id: interview.value?.id,
-        },
-      })
-      step.value = 2
+          `,
+          variables: {
+            id: interview.value?.id,
+          },
+        })
+        step.value = 2
+      } catch (e) {
+        const error = e as Error
+        window.toast({
+          level: 'ERROR',
+          title: error.message,
+        })
+      }
     },
   })
 }
@@ -108,27 +116,68 @@ const nextStep = () => {
       description: t('interview.startConfirmation.description'),
       onConfirm: async () => {
         step.value++
-        const response = await useAPIRequestStore().request<{
-          startInterview: IInterviewCache
-        }>({
-          type: 'MUTATION',
-          document: gql`
-            mutation StartInterview($input: StartInterviewInput!) {
-              startInterview(input: $input) {
-                id
-                status
-                question
+        try {
+          const response = await useAPIRequestStore().request<{
+            startInterview: IInterviewCache
+          }>({
+            type: 'MUTATION',
+            document: gql`
+              mutation StartInterview($input: StartInterviewInput!) {
+                startInterview(input: $input) {
+                  id
+                  status
+                  question
 
-                answerCount
-                maxAnswerCount
+                  answerCount
+                  maxAnswerCount
+                }
               }
-            }
-          `,
-          variables: { input: { themeId: theme.value?.id } },
-        })
-        interview.value = response.startInterview
+            `,
+            variables: { input: { themeId: theme.value?.id } },
+          })
+          interview.value = response.startInterview
+          localStorage.setItem('mockin:interviewId', interview.value.id)
+        } catch (e) {
+          const error = e as Error
+          window.toast({
+            level: 'ERROR',
+            title: error.message,
+          })
+        }
       },
     })
+  }
+}
+const setInterview = async () => {
+  if (!interviewId.value) return
+  try {
+    const response = await useAPIRequestStore().request<{ mockInterview: IInterviewCache }>({
+      type: 'QUERY',
+      document: gql`
+        query MockInterview($id: ID!) {
+          mockInterview(id: $id) {
+            id
+            status
+            question
+
+            answerCount
+            maxAnswerCount
+          }
+        }
+      `,
+      variables: { id: interviewId.value },
+    })
+    interview.value = response.mockInterview
+    step.value = 1
+  } catch (e) {
+    console.error(e)
+    const error = e as Error
+    window.toast({
+      level: 'ERROR',
+      title: error.message,
+    })
+    localStorage.removeItem('mockin:interviewId')
+    interviewId.value = null
   }
 }
 const updateInterview = (props: Partial<IInterviewCache>) => {
@@ -146,6 +195,10 @@ const setInterviewerAnswering = (isAnswering: boolean) => {
 const selectTheme = (t: { id: string; displayName: string }) => {
   theme.value = t
 }
+
+onMounted(() => {
+  setInterview()
+})
 </script>
 
 <style scoped>

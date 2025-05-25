@@ -10,8 +10,8 @@ interface IRequestParams {
 }
 
 export const useAPIRequestStore = defineStore('apiRequest', () => {
-  const _parseError = (errors: any) => {
-    return (errors || []).map(({ message }: { message: string }) => message).join(', ')
+  const _throwError = (errors: any) => {
+    return new Error((errors || []).map(({ message }: { message: string }) => message).join(', '))
   }
 
   const _resolveQuery = <T>(document: any, variables: Record<string, unknown>): Promise<T> => {
@@ -24,7 +24,7 @@ export const useAPIRequestStore = defineStore('apiRequest', () => {
       onResult(({ data, loading, errors }) => {
         if (!loading) {
           if (errors?.length) {
-            return reject(_parseError(errors))
+            return reject(_throwError(errors))
           }
           return resolve(data)
         }
@@ -44,7 +44,7 @@ export const useAPIRequestStore = defineStore('apiRequest', () => {
         .then(({ data }: any) => resolve(data))
         .catch((error) => {
           console.error(error)
-          return reject(_parseError(error?.graphQLErrors))
+          return reject(_throwError(error?.graphQLErrors))
         })
     })
   }

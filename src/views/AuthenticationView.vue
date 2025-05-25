@@ -13,7 +13,9 @@
           :link="{ name: 'home' }"
           :text="$t('authentication.backToHome')"
         />
-        <h2>{{ $t(`authentication.${authenticationType}.title`) }}</h2>
+        <h2 v-if="authenticationType !== 'passwordForgotten'">
+          {{ $t(`authentication.${authenticationType}.title`) }}
+        </h2>
       </header>
       <KeepAlive>
         <component :is="{ ...authenticationComponent }" />
@@ -77,7 +79,7 @@ div.authentication-area div.left {
   width: 50%;
 }
 div.authentication-area div.right {
-  width: 50vh;
+  width: 61vh;
   margin: auto;
 }
 div.authentication-area div.left {

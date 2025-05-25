@@ -6,6 +6,14 @@
       "prices": "Tarifs",
       "support": "Support",
       "login": "Se connecter"
+    },
+    "profile": {
+      "myProfile": "Mon espace",
+      "disconnect": "Déconnexion",
+      "disconnectConfirm": {
+        "title": "Êtes-vous sûr de vouloir vous déconnecter ?",
+        "description": "Cette action est irréversible."
+      }
     }
   },
   "modals": {
@@ -80,6 +88,9 @@
     }
   },
   "authentication": {
+    "success": {
+      "nowConnected": "Vous êtes maintenant connecté.e"
+    },
     "backToHome": "Retour à l'accueil",
     "login": {
       "title": "Connexion à votre compte",
@@ -93,15 +104,24 @@
     },
     "register": {
       "title": "Inscription",
+      "givenName": "Prénom",
+      "familyName": "Nom",
+      "password": "Mot de passe",
       "email": "E-mail",
       "confirm": "S'inscrire",
+      "gdprAccepted": "En cochant cette case, vous acceptez nos conditions générales d'utilisation",
       "otherChoice": ["Déjà un compte ?", "Connectez-vous"]
     },
     "passwordForgotten": {
       "email": "E-mail de récupération",
       "title": "Mot de passe oublié",
       "otherChoice": ["Mot de passe retrouvé ?", "Connectez-vous"],
-      "confirm": "Envoyer un e-mail"
+      "confirm": "Envoyer un e-mail",
+      "mailSentAt": "Mail envoyé à l'adresse",
+      "newPassword": "Nouveau mot de passe",
+      "changeMyPassword": "Changer mon mot de passe",
+      "newPasswordDefined": "Nouveau mot de passe définit",
+      "redirect": ["Vous pouvez maintenant vous", "connecter"]
     }
   },
   "interview": {
@@ -159,7 +179,7 @@
         {
           "label": "écrit",
           "placeholder": "Entrer votre réponse ici",
-          "min": "caractères minimum"
+          "chars": "caractères"
         },
         {
           "label": "vocal",
